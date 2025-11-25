@@ -7,6 +7,8 @@ A SketchUp plugin that automatically prompts you to log changes every time you s
 - 📝 **Automatic Change Prompts** - Dialog appears automatically after each save
 - 👤 **User Tracking** - Logs username with each commit for multi-user projects
 - ⏰ **Timestamped Entries** - Every change is recorded with date and time
+- 🚀 **Push to Master** - Save working versions to a master file (like git push) for Layout compatibility
+- ⚙️ **Settings Dialog** - Configure master file path and preferences
 - 📖 **Change Log Viewer** - View and edit your entire project history
 - 💾 **Persistent Storage** - Logs saved as `.txt` files alongside your `.skp` files
 - ✏️ **Editable History** - Modify past entries through the built-in viewer
@@ -48,19 +50,6 @@ A SketchUp plugin that automatically prompts you to log changes every time you s
    ```
 5. **Click "Log Change"** to save the entry
    - Or click "Skip" if you don't want to log this save
-
-### Viewing Change Log
-
-1. Go to **Plugins > View Project Change Log**
-2. The **Project History** window opens showing all logged changes
-3. **Edit entries** directly in the text area if needed
-4. **Click "Save Edits"** to update the log file
-
-### Log File Location
-
-Change logs are automatically saved as text files next to your SketchUp models:
-- Model: `MyProject.skp`
-- Log: `MyProject_changelog.txt`
 
 ### Log Entry Format
 
@@ -135,6 +124,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 5. Open a Pull Request
 
 ## Changelog
+
+### Version 1.1.0 (2025-11-25)
+- Added Push to Master feature
+- Added Settings dialog for master file configuration
+- Refactored dialogs with Trimble Modus design system
+- Fixed duplicate dialog issue with singleton observers
+- Improved UI consistency and styling
 
 ### Version 1.0.0 (2025-11-25)
 - Initial release
