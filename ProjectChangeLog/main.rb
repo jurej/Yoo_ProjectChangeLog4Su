@@ -255,11 +255,11 @@ module ProjectChangeLog4Su
     unless file_loaded?(__FILE__)
       # Add Menu Items
       menu = UI.menu('Plugins')
-      menu.add_item('View Project Change Log') {
+      submenu = menu.add_submenu('Project Change Log')
+      submenu.add_item('View History') {
         self.open_log_viewer
       }
-      menu.add_separator
-      menu.add_item('ProjectChangeLog Settings...') {
+      submenu.add_item('Settings...') {
         self.open_settings_dialog
       }
 
