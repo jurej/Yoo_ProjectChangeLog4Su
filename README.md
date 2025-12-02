@@ -9,9 +9,9 @@ A SketchUp plugin that automatically prompts you to log changes every time you s
 - ⏰ **Timestamped Entries** - Every change is recorded with date and time
 - 🚀 **Push to Master** - Save working versions to a master file (like git push) for Layout compatibility
 - ⚙️ **Settings Dialog** - Configure master file path and preferences
-- 📖 **Change Log Viewer** - View and edit your entire project history
-- 💾 **Persistent Storage** - Logs saved as `.txt` files alongside your `.skp` files
-- ✏️ **Editable History** - Modify past entries through the built-in viewer
+- 📊 **Table History Viewer** - View your entire project history in a clean, organized table
+- 💾 **CSV Storage** - Logs saved as `.csv` files alongside your `.skp` files for easy export and analysis
+- 🔍 **Searchable Data** - CSV format allows filtering and sorting in Excel or other tools
 
 ## Installation
 
@@ -54,39 +54,42 @@ A SketchUp plugin that automatically prompts you to log changes every time you s
 > [!NOTE]
 > If you have **autosave enabled** in SketchUp's preferences, the commit log dialog will also appear after each autosave event. You can click "Skip" for autosaves and only log intentional save points, or you can use it to create automatic checkpoints at regular intervals.
 
-### Log Entry Format
+### History Viewer
 
-Each entry includes:
+Access your project history by going to **Plugins > View Project Change Log**
+
+The history is displayed in a professional table format with:
+- **Timestamp** column showing when each change was made
+- **User** column identifying who made the change
+- **Message** column with the detailed description
+- Newest entries appear at the top
+- Sticky headers that stay visible when scrolling
+- Zebra-striped rows for easy reading
+
+### CSV Storage Format
+
+Log files are stored in CSV format with three columns:
+```csv
+"2025-11-25 11:53:03","JohnDoe","- Added new windows to facade
+- Updated door placements"
 ```
-[2025-11-25 11:53:03] User: JohnDoe - Save Commit:
-- Added new windows to facade
-- Updated door placements
-----------------------------------------
-```
 
-## Example Log
+This format allows you to:
+- Open and analyze logs in Excel, Google Sheets, or other spreadsheet tools
+- Filter and sort by date, user, or message content
+- Export data for reports or project documentation
+- Integrate with other tools and workflows
 
-```
-[2025-11-20 09:15:23] User: Alice - Save Commit:
-- Initial model setup
-- Created basic floor plan
-----------------------------------------
+## Example History Table
 
-[2025-11-20 14:32:10] User: Alice - Save Commit:
-- Added exterior walls
-- Placed windows and doors
-----------------------------------------
+When you open the history viewer, you'll see a table like this:
 
-[2025-11-21 10:05:45] User: Bob - Save Commit:
-- Added roof structure
-- Created chimney detail
-----------------------------------------
-
-[2025-11-21 15:20:33] User: Alice - Save Commit:
-- Applied materials to walls
-- Fixed alignment issues
-----------------------------------------
-```
+| Timestamp           | User  | Message                                              |
+|---------------------|-------|------------------------------------------------------|
+| 2025-11-21 15:20:33 | Alice | - Applied materials to walls<br>- Fixed alignment issues |
+| 2025-11-21 10:05:45 | Bob   | - Added roof structure<br>- Created chimney detail   |
+| 2025-11-20 14:32:10 | Alice | - Added exterior walls<br>- Placed windows and doors |
+| 2025-11-20 09:15:23 | Alice | - Initial model setup<br>- Created basic floor plan  |
 
 ## Benefits
 
@@ -127,6 +130,14 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 5. Open a Pull Request
 
 ## Changelog
+
+### Version 1.2.0 (2025-12-02)
+- 🎉 **Major Update**: Converted changelog from text to CSV format
+- 📊 New table-based history viewer with sortable columns
+- ✨ Professional UI with sticky headers and zebra striping
+- 📈 CSV files can now be opened in Excel/Google Sheets for advanced analysis
+- 🔄 Improved data structure: Timestamp, User, Message columns
+- 🎨 Enhanced visual design with better readability
 
 ### Version 1.1.1 (2025-11-28)
 - Added RuboCop configuration for code quality

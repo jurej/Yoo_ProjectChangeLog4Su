@@ -2,6 +2,7 @@
 # License:: The MIT License (MIT)
 
 require 'fileutils'
+require 'csv'
 require_relative 'dialogs'
 
 module ProjectChangeLog4Su
@@ -69,9 +70,9 @@ module ProjectChangeLog4Su
         FileUtils.cp(source_path, master_path)
         
         # Also copy the changelog file if it exists
-        source_log = source_path.gsub('.skp', '_changelog.txt')
+        source_log = source_path.gsub('.skp', '_changelog.csv')
         if File.exist?(source_log)
-          master_log = master_path.gsub('.skp', '_changelog.txt')
+          master_log = master_path.gsub('.skp', '_changelog.csv')
           FileUtils.cp(source_log, master_log)
         end
         
@@ -86,8 +87,8 @@ module ProjectChangeLog4Su
       skp_path = model.path
       return nil if skp_path.empty? # Model hasn't been saved yet
       
-      # Create a .txt path based on the .skp path
-      return skp_path.gsub(".skp", "_changelog.txt")
+      # Create a .csv path based on the .skp path
+      return skp_path.gsub(".skp", "_changelog.csv")
     end
 
     # Settings Dialog
@@ -181,10 +182,11 @@ module ProjectChangeLog4Su
         
         timestamp = Time.now.strftime("%Y-%m-%d %H:%M:%S")
         username = ENV['USERNAME'] || ENV['USER'] || 'Unknown'
-        entry = "\n[#{timestamp}] User: #{username} - Save Commit:\n#{data['message']}\n----------------------------------------"
         
-        # Append to file
-        File.open(log_path, 'a') { |file| file.write(entry) }
+        # Write CSV entry
+        CSV.open(log_path, 'a') do |csv|
+          csv << [timestamp, username, data['message']]
+        end
         puts "Log updated at #{log_path}"
         
         # Save settings
@@ -214,7 +216,7 @@ module ProjectChangeLog4Su
       dialog.show
     end
 
-    # Viewer/Editor for the log
+    # Viewer for the log
     def self.open_log_viewer
       model = Sketchup.active_model
       log_path = get_log_path(model)
@@ -224,28 +226,24 @@ module ProjectChangeLog4Su
         return
       end
 
-      content = File.read(log_path)
+      # Read and parse CSV data
+      rows = []
+      CSV.foreach(log_path) do |row|
+        rows << row
+      end
 
       dialog = UI::HtmlDialog.new(
         {
-          :dialog_title => "Project Change Log",
+          :dialog_title => "Project History",
           :preferences_key => "com.genai.commit_log_viewer",
           :resizable => true,
-          :width => 600,
-          :height => 500,
+          :width => 800,
+          :height => 600,
           :style => UI::HtmlDialog::STYLE_WINDOW
         })
 
-      # Escape backslashes for JS string safety
-      safe_content = content.gsub("\\", "\\\\\\\\").gsub("`", "\\`").gsub("$", "\\$")
-
       # Use the dialogs module for HTML
-      dialog.set_html(Dialogs.log_viewer_dialog_html(safe_content, File.basename(model.path)))
-
-      dialog.add_action_callback("save_full_log") do |action_context, new_content|
-        File.open(log_path, 'w') { |file| file.write(new_content) }
-        UI.messagebox("Log updated successfully.")
-      end
+      dialog.set_html(Dialogs.log_viewer_dialog_html(rows, File.basename(model.path)))
 
       dialog.center
       dialog.show

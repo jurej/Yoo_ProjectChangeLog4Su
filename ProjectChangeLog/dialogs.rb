@@ -253,8 +253,21 @@ module ProjectChangeLog4Su
       HTML
     end
 
-    # Log Viewer Dialog HTML
-    def self.log_viewer_dialog_html(safe_content, basename)
+    # Log Viewer Dialog HTML - Table-based CSV viewer
+    def self.log_viewer_dialog_html(rows, basename)
+      # Build table rows HTML
+      table_rows = rows.reverse.map do |row|
+        timestamp = row[0] || ''
+        user = row[1] || ''
+        message = row[2] || ''
+        # Escape HTML entities
+        timestamp_safe = timestamp.gsub('&', '&amp;').gsub('<', '&lt;').gsub('>', '&gt;')
+        user_safe = user.gsub('&', '&amp;').gsub('<', '&lt;').gsub('>', '&gt;')
+        message_safe = message.gsub('&', '&amp;').gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", '<br>')
+        
+        "<tr><td>#{timestamp_safe}</td><td>#{user_safe}</td><td class=\"message-cell\">#{message_safe}</td></tr>"
+      end.join("\n")
+      
       <<-HTML
         <!DOCTYPE html>
         <html>
@@ -267,34 +280,78 @@ module ProjectChangeLog4Su
               flex-direction: column;
               height: 95vh;
               padding: 16px;
+              overflow: hidden;
             }
             h3 {
               margin: 0 0 12px 0;
               flex-shrink: 0;
             }
-            textarea {
+            .table-container {
               flex: 1;
-              font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-              font-size: 13px;
-              margin-bottom: 12px;
+              overflow: auto;
+              border: 1px solid #cbcdd6;
+              border-radius: 4px;
+              background: #ffffff;
             }
-            .button-row {
-              flex-shrink: 0;
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: 13px;
+            }
+            thead {
+              position: sticky;
+              top: 0;
+              background: #f8f9fa;
+              z-index: 10;
+            }
+            th {
+              text-align: left;
+              padding: 12px;
+              font-weight: 600;
+              color: #252a2e;
+              border-bottom: 2px solid #cbcdd6;
+              white-space: nowrap;
+            }
+            td {
+              padding: 10px 12px;
+              border-bottom: 1px solid #e0e1e9;
+              vertical-align: top;
+            }
+            tbody tr:nth-child(even) {
+              background: #f8f9fa;
+            }
+            tbody tr:hover {
+              background: #e8f4fd;
+            }
+            .message-cell {
+              word-wrap: break-word;
+              white-space: pre-wrap;
+              max-width: 500px;
+            }
+            .empty-state {
+              text-align: center;
+              padding: 40px;
+              color: #6a7075;
             }
           </style>
         </head>
         <body>
           <h3>Project History (#{basename})</h3>
-          <textarea id="full_log">#{safe_content}</textarea>
-          <div class="button-row">
-            <button class="primary" onclick="saveChanges()">Save Edits</button>
+          <div class="table-container">
+            #{rows.empty? ? '<div class="empty-state">No history entries yet. Save the model to create the first entry.</div>' : 
+            "<table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>User</th>
+                  <th>Message</th>
+                </tr>
+              </thead>
+              <tbody>
+                #{table_rows}
+              </tbody>
+            </table>"}
           </div>
-          <script>
-            function saveChanges() {
-              var txt = document.getElementById('full_log').value;
-              sketchup.save_full_log(txt);
-            }
-          </script>
         </body>
         </html>
       HTML
