@@ -7,6 +7,15 @@ AllCops:
     SourcePath: . # Path to extension sources in project directory.
     EncryptedExtension: false # Enable if you plan to encrypt your extension.
     TargetSketchUpVersion: 2017
+  Exclude:
+    - 'Gemfile*'
+    - '**/*.md'
+    - '**/*.rbz'
+    - 'scripts/**'
+    - '.github/**'
+    - 'releases/**'
+    - 'run_rubocop.ps1'
+    - 'report.html'
 
 SketchupDeprecations:
   Enabled: true
@@ -16,6 +25,12 @@ SketchupPerformance:
 
 SketchupRequirements:
   Enabled: true
+  # FileStructure check is for the packaged extension structure, not the repo
+  # The .rbz file has the correct structure (one .rb file + one support directory)
+  SketchupRequirements/FileStructure:
+    Exclude:
+      - 'Yoo_ProjectChangeLog4Su.rb'
+      - '**/*'
 
 SketchupSuggestions:
   Enabled: true
