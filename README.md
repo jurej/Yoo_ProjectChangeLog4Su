@@ -105,6 +105,27 @@ When you open the history viewer, you'll see a table like this:
 - **Operating System**: Windows and macOS
 - **Ruby Version**: 2.x and later
 
+## Code Quality
+
+This project uses [rubocop-sketchup](https://github.com/SketchUp/rubocop-sketchup) to ensure compliance with SketchUp Extension Warehouse requirements and best practices.
+
+### Automated Checks
+
+Code quality checks run automatically via GitHub Actions on every push and pull request. See `.github/workflows/rubocop.yml` for details.
+
+### Local Checks
+
+To run checks locally, see the scripts in the `scripts/` directory:
+- Windows: `.\scripts\check_release.ps1`
+- Linux/macOS: `./scripts/check_release.sh`
+
+Or install and run manually:
+```bash
+gem install rubocop rubocop-sketchup
+rubocop --format simple
+rubocop -f extension_review -o report.html
+```
+
 ## Support
 
 Having issues? Please [open an issue](../../issues) on GitHub with:

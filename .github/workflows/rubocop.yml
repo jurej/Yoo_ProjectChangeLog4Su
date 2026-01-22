@@ -1,0 +1,49 @@
+name: RuboCop SketchUp
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  rubocop:
+    name: RuboCop SketchUp
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.0'
+        bundler-cache: true
+    
+    - name: Install dependencies
+      run: |
+        gem install rubocop
+        gem install rubocop-sketchup
+    
+    - name: Run RuboCop
+      run: |
+        rubocop --format simple
+        rubocop --format json --out rubocop.json || true
+    
+    - name: Generate Extension Review Report
+      run: |
+        rubocop -f extension_review -o report.html || true
+    
+    - name: Upload RuboCop JSON report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: rubocop-report
+        path: rubocop.json
+    
+    - name: Upload Extension Review HTML report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: extension-review-report
+        path: report.html

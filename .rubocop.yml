@@ -7,13 +7,18 @@ AllCops:
     SourcePath: . # Path to extension sources in project directory.
     EncryptedExtension: false # Enable if you plan to encrypt your extension.
     TargetSketchUpVersion: 2017
-    SketchupDeprecations:
-      Enabled: true
-    SketchupPerformance:
-      Enabled: true
-    SketchupRequirements:
-      Enabled: true
-    SketchupSuggestions:
-      Enabled: true
-    SketchupBugs:
-      Enabled: true
+
+SketchupDeprecations:
+  Enabled: true
+
+SketchupPerformance:
+  Enabled: true
+
+SketchupRequirements:
+  Enabled: true
+
+SketchupSuggestions:
+  Enabled: true
+
+SketchupBugs:
+  Enabled: true
