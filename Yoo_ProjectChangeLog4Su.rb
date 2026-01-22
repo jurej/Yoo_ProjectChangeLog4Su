@@ -6,7 +6,7 @@ module Yoo_ProjectChangeLog4Su
     unless file_loaded?(__FILE__)
       ex = SketchupExtension.new('Project Change Log', 'Yoo_ProjectChangeLog4Su/main')
       ex.description = 'Prompts for a commit message on save and stores it in a text file.'
-      ex.version     = '1.2.0'
+      ex.version     = '1.3.0'
       ex.copyright   = 'Jure Judež, 2025'
       ex.creator     = 'Jure Judež'
       Sketchup.register_extension(ex, true)

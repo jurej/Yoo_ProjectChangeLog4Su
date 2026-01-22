@@ -180,8 +180,8 @@ module Yoo_ProjectChangeLog4Su
               Disable automatic prompts (use 'Log Changes Now' menu item instead)
             </label>
             <label for="skip_threshold_minutes">Skip prompts if less than X minutes since last prompt:</label>
-            <input type="number" id="skip_threshold_minutes" min="1" max="60" value="#{skip_threshold_minutes}">
-            <small>Prompts will be skipped if a save occurs within this time window. Default: 5 minutes.</small>
+            <input type="number" id="skip_threshold_minutes" min="0" max="60" value="#{skip_threshold_minutes}">
+            <small>Prompts will be skipped if a save occurs within this time window. Set to 0 to disable skipping. Default: 5 minutes.</small>
           </div>
           
           <h3>Master File Settings</h3>
@@ -203,9 +203,10 @@ module Yoo_ProjectChangeLog4Su
             function saveSettings() {
               var masterPath = document.getElementById('master_path').value;
               var disableAuto = document.getElementById('disable_auto_prompts').checked;
-              var threshold = parseInt(document.getElementById('skip_threshold_minutes').value) || 5;
-              // Clamp threshold between 1 and 60
-              threshold = Math.max(1, Math.min(60, threshold));
+              var threshold = parseInt(document.getElementById('skip_threshold_minutes').value);
+              // Clamp threshold between 0 and 60 (0 disables skipping)
+              if (isNaN(threshold) || threshold < 0) threshold = 5;
+              threshold = Math.max(0, Math.min(60, threshold));
               var data = JSON.stringify({
                 masterPath: masterPath,
                 disableAutoPrompts: disableAuto,

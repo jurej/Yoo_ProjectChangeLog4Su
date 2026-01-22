@@ -131,6 +131,10 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Changelog
 
+### Version 1.3.0 (2026-01-22)
+- ✨ Allow setting skip threshold to 0 to disable prompt skipping
+- 🔧 Improved validation for skip threshold input field
+
 ### Version 1.2.0 (2025-12-02)
 - 🎉 **Major Update**: Converted changelog from text to CSV format
 - 📊 New table-based history viewer with sortable columns
