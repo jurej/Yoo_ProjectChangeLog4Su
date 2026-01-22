@@ -1,4 +1,4 @@
-# ProjectChangeLog4Su
+# Yoo_ProjectChangeLog4Su
 
 A SketchUp plugin that automatically prompts you to log changes every time you save your model, creating a comprehensive project history with timestamps and usernames.
 
@@ -29,8 +29,8 @@ A SketchUp plugin that automatically prompts you to log changes every time you s
    - macOS: `~/Library/Application Support/SketchUp [Version]/SketchUp/Plugins/`
 
 3. **Install files**
-   - Copy the entire `ProjectChangeLog4Su` folder to your Plugins directory
-   - Copy `ProjectChangeLog4Su.rb` to your Plugins directory
+   - Copy the entire `Yoo_ProjectChangeLog4Su` folder to your Plugins directory
+   - Copy `Yoo_ProjectChangeLog4Su.rb` to your Plugins directory
 
 4. **Restart SketchUp**
    - The plugin will load automatically on startup

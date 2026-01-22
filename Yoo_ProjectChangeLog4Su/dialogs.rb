@@ -1,7 +1,7 @@
 # Copyright:: Copyright 2024
 # License:: The MIT License (MIT)
 
-module ProjectChangeLog4Su
+module Yoo_ProjectChangeLog4Su
   module Dialogs
 
     # Shared Trimble Modus-based stylesheet for all dialogs
@@ -34,7 +34,7 @@ module ProjectChangeLog4Su
         font-size: 13px;
       }
 
-      input[type="text"] {
+      input[type="text"], input[type="number"] {
         width: 100%;
         padding: 8px 12px;
         border: 1px solid #cbcdd6;
@@ -46,7 +46,7 @@ module ProjectChangeLog4Su
         transition: border-color 0.2s;
       }
 
-      input[type="text"]:focus {
+      input[type="text"]:focus, input[type="number"]:focus {
         outline: none;
         border-color: #0063a3;
         box-shadow: 0 0 0 3px rgba(0, 99, 163, 0.1);
@@ -163,7 +163,8 @@ module ProjectChangeLog4Su
     CSS
 
     # Settings Dialog HTML
-    def self.settings_dialog_html(safe_master_path)
+    def self.settings_dialog_html(safe_master_path, disable_auto_prompts, skip_threshold_minutes)
+      checked_attr = disable_auto_prompts ? 'checked' : ''
       <<-HTML
         <!DOCTYPE html>
         <html>
@@ -172,6 +173,17 @@ module ProjectChangeLog4Su
           <style>#{SHARED_STYLES}</style>
         </head>
         <body>
+          <h3>Auto-Save Behavior</h3>
+          <div class="section">
+            <label>
+              <input type="checkbox" id="disable_auto_prompts" #{checked_attr}> 
+              Disable automatic prompts (use 'Log Changes Now' menu item instead)
+            </label>
+            <label for="skip_threshold_minutes">Skip prompts if less than X minutes since last prompt:</label>
+            <input type="number" id="skip_threshold_minutes" min="1" max="60" value="#{skip_threshold_minutes}">
+            <small>Prompts will be skipped if a save occurs within this time window. Default: 5 minutes.</small>
+          </div>
+          
           <h3>Master File Settings</h3>
           <label for="master_path">Master File Path:</label>
           <div class="path-row">
@@ -189,8 +201,17 @@ module ProjectChangeLog4Su
               window.location = 'skp:browse_master';
             }
             function saveSettings() {
-              var path = document.getElementById('master_path').value;
-              window.location = 'skp:save_settings@' + encodeURIComponent(path);
+              var masterPath = document.getElementById('master_path').value;
+              var disableAuto = document.getElementById('disable_auto_prompts').checked;
+              var threshold = parseInt(document.getElementById('skip_threshold_minutes').value) || 5;
+              // Clamp threshold between 1 and 60
+              threshold = Math.max(1, Math.min(60, threshold));
+              var data = JSON.stringify({
+                masterPath: masterPath,
+                disableAutoPrompts: disableAuto,
+                skipThresholdMinutes: threshold
+              });
+              window.location = 'skp:save_settings@' + encodeURIComponent(data);
             }
           </script>
         </body>

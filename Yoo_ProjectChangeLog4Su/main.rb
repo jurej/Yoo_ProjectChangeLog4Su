@@ -4,7 +4,7 @@
 require 'fileutils'
 require_relative 'dialogs'
 
-module ProjectChangeLog4Su
+module Yoo_ProjectChangeLog4Su
   module ProjectChangeLog
     
     # Simple CSV helper methods to avoid dependency on Ruby's CSV library
@@ -63,11 +63,11 @@ module ProjectChangeLog4Su
     # that is created or opened[cite: 102, 106].
     class MyAppObserver < Sketchup::AppObserver
       def onNewModel(model)
-        ProjectChangeLog4Su::ProjectChangeLog.attach_model_observer(model)
+        Yoo_ProjectChangeLog4Su::ProjectChangeLog.attach_model_observer(model)
       end
 
       def onOpenModel(model)
-        ProjectChangeLog4Su::ProjectChangeLog.attach_model_observer(model)
+        Yoo_ProjectChangeLog4Su::ProjectChangeLog.attach_model_observer(model)
       end
     end
 
@@ -76,7 +76,7 @@ module ProjectChangeLog4Su
     class MyModelObserver < Sketchup::ModelObserver
       def onPostSaveModel(model)
         # Trigger the log prompt
-        ProjectChangeLog4Su::ProjectChangeLog.prompt_for_log(model)
+        Yoo_ProjectChangeLog4Su::ProjectChangeLog.prompt_for_log(model)
       end
     end
 
@@ -96,13 +96,13 @@ module ProjectChangeLog4Su
 
     # Settings Management using SketchUp Model Attributes
     def self.get_setting(model, key, default = nil)
-      dict = model.attribute_dictionary('ProjectChangeLog4Su', false)
+      dict = model.attribute_dictionary('Yoo_ProjectChangeLog4Su', false)
       return default unless dict
       dict[key] || default
     end
 
     def self.set_setting(model, key, value)
-      dict = model.attribute_dictionary('ProjectChangeLog4Su', true)
+      dict = model.attribute_dictionary('Yoo_ProjectChangeLog4Su', true)
       dict[key] = value
     end
 
@@ -142,15 +142,17 @@ module ProjectChangeLog4Su
     def self.open_settings_dialog
       model = Sketchup.active_model
       current_master = get_setting(model, 'master_file_path', '')
+      disable_auto_prompts = get_setting(model, 'disable_auto_prompts', false)
+      skip_threshold_minutes = get_setting(model, 'skip_threshold_minutes', 5)
       
       dialog = UI::HtmlDialog.new(
         {
-          :dialog_title => "ProjectChangeLog Settings",
-          :preferences_key => "com.projectchangelog4su.settings",
-          :scrollable => false,
+          :dialog_title => "Yoo ProjectChangeLog4Su Settings",
+          :preferences_key => "com.yoo.projectchangelog.settings",
+          :scrollable => true,
           :resizable => true,
           :width => 450,
-          :height => 250,
+          :height => 400,
           :style => UI::HtmlDialog::STYLE_DIALOG
         })
 
@@ -158,7 +160,7 @@ module ProjectChangeLog4Su
       safe_master_path = current_master.gsub("\\", "\\\\\\\\").gsub("\"", "\\\"")
 
       # Use the dialogs module for HTML
-      dialog.set_html(Dialogs.settings_dialog_html(safe_master_path))
+      dialog.set_html(Dialogs.settings_dialog_html(safe_master_path, disable_auto_prompts, skip_threshold_minutes))
       
       dialog.add_action_callback("browse_master") do |action_context|
         path = UI.savepanel("Select Master File Location", "", "*.skp")
@@ -169,8 +171,14 @@ module ProjectChangeLog4Su
         end
       end
       
-      dialog.add_action_callback("save_settings") do |action_context, master_path|
-        set_setting(model, 'master_file_path', master_path)
+      dialog.add_action_callback("save_settings") do |action_context, json_data|
+        require 'json'
+        data = JSON.parse(json_data)
+        
+        set_setting(model, 'master_file_path', data['masterPath'])
+        set_setting(model, 'disable_auto_prompts', data['disableAutoPrompts'])
+        set_setting(model, 'skip_threshold_minutes', data['skipThresholdMinutes'])
+        
         UI.messagebox("Settings saved successfully!")
         dialog.close
       end
@@ -184,9 +192,33 @@ module ProjectChangeLog4Su
     end
 
     # Pop up the dialog to ask what changed
-    def self.prompt_for_log(model)
+    def self.prompt_for_log(model, force: false)
       log_path = get_log_path(model)
       return unless log_path # Safety check
+
+      # Skip if auto-prompts are disabled (unless forced by manual trigger)
+      return unless force || !get_setting(model, 'disable_auto_prompts', false)
+      
+      # Time-based filtering (unless forced)
+      unless force
+        last_prompt = get_setting(model, 'last_prompt_time', nil)
+        threshold_minutes = get_setting(model, 'skip_threshold_minutes', 5)
+        
+        if last_prompt
+          begin
+            elapsed_minutes = (Time.now - Time.parse(last_prompt)) / 60.0
+            if elapsed_minutes < threshold_minutes
+              return # Skip auto-save
+            end
+          rescue => e
+            # If parsing fails, continue with prompt
+            puts "Error parsing last_prompt_time: #{e.message}"
+          end
+        end
+      end
+      
+      # Store current time before showing dialog
+      set_setting(model, 'last_prompt_time', Time.now.to_s)
 
       # Get current master file path from settings
       master_path = get_setting(model, 'master_file_path', '')
@@ -198,7 +230,7 @@ module ProjectChangeLog4Su
       dialog = UI::HtmlDialog.new(
         {
           :dialog_title => "Commit Changes",
-          :preferences_key => "com.projectchangelog4su.commit_log_input",
+          :preferences_key => "com.yoo.projectchangelog.commit_log_input",
           :scrollable => false,
           :resizable => true,
           :width => 450,
@@ -287,7 +319,7 @@ module ProjectChangeLog4Su
       dialog = UI::HtmlDialog.new(
         {
           :dialog_title => "Project History",
-          :preferences_key => "com.genai.commit_log_viewer",
+          :preferences_key => "com.yoo.projectchangelog.log_viewer",
           :resizable => true,
           :width => 800,
           :height => 600,
@@ -310,6 +342,14 @@ module ProjectChangeLog4Su
       submenu = menu.add_submenu('Project Change Log')
       submenu.add_item('View History') {
         self.open_log_viewer
+      }
+      submenu.add_item('Log Changes Now') {
+        model = Sketchup.active_model
+        if model.path.empty?
+          UI.messagebox("Please save the model first before logging changes.")
+        else
+          self.prompt_for_log(model, force: true)
+        end
       }
       submenu.add_item('Settings...') {
         self.open_settings_dialog
