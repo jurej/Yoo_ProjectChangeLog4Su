@@ -163,8 +163,8 @@ module Yoo_ProjectChangeLog4Su
     CSS
 
     # Settings Dialog HTML
-    def self.settings_dialog_html(safe_master_path, disable_auto_prompts, skip_threshold_minutes)
-      checked_attr = disable_auto_prompts ? 'checked' : ''
+    def self.settings_dialog_html(safe_master_path, enable_auto_prompts, skip_threshold_minutes)
+      checked_attr = enable_auto_prompts ? 'checked' : ''
       <<-HTML
         <!DOCTYPE html>
         <html>
@@ -176,8 +176,8 @@ module Yoo_ProjectChangeLog4Su
           <h3>Auto-Save Behavior</h3>
           <div class="section">
             <label>
-              <input type="checkbox" id="disable_auto_prompts" #{checked_attr}> 
-              Disable automatic prompts (use 'Log Changes Now' menu item instead)
+              <input type="checkbox" id="enable_auto_prompts" #{checked_attr}> 
+              Enable automatic prompts (default: off)
             </label>
             <label for="skip_threshold_minutes">Skip prompts if less than X minutes since last prompt:</label>
             <input type="number" id="skip_threshold_minutes" min="0" max="60" value="#{skip_threshold_minutes}">
@@ -202,14 +202,14 @@ module Yoo_ProjectChangeLog4Su
             }
             function saveSettings() {
               var masterPath = document.getElementById('master_path').value;
-              var disableAuto = document.getElementById('disable_auto_prompts').checked;
+              var enableAuto = document.getElementById('enable_auto_prompts').checked;
               var threshold = parseInt(document.getElementById('skip_threshold_minutes').value);
               // Clamp threshold between 0 and 60 (0 disables skipping)
               if (isNaN(threshold) || threshold < 0) threshold = 5;
               threshold = Math.max(0, Math.min(60, threshold));
               var data = JSON.stringify({
                 masterPath: masterPath,
-                disableAutoPrompts: disableAuto,
+                enableAutoPrompts: enableAuto,
                 skipThresholdMinutes: threshold
               });
               window.location = 'skp:save_settings@' + encodeURIComponent(data);
@@ -276,7 +276,8 @@ module Yoo_ProjectChangeLog4Su
     end
 
     # Log Viewer Dialog HTML - Table-based CSV viewer
-    def self.log_viewer_dialog_html(rows, basename)
+    def self.log_viewer_dialog_html(rows, basename, enable_auto_prompts)
+      checked_attr = enable_auto_prompts ? 'checked' : ''
       # Build table rows HTML
       table_rows = rows.reverse.map do |row|
         timestamp = row[0] || ''
@@ -359,6 +360,13 @@ module Yoo_ProjectChangeLog4Su
         </head>
         <body>
           <h3>Project History (#{basename})</h3>
+          <div class="section" style="margin-top: 0;">
+            <label>
+              <input type="checkbox" id="enable_auto_prompts" #{checked_attr} onchange="toggleAutoPrompts()">
+              Enable automatic prompts
+            </label>
+            <small>If disabled, use "Log Changes Now" to add entries manually.</small>
+          </div>
           <div class="table-container">
             #{rows.empty? ? '<div class="empty-state">No history entries yet. Save the model to create the first entry.</div>' : 
             "<table>
@@ -374,6 +382,12 @@ module Yoo_ProjectChangeLog4Su
               </tbody>
             </table>"}
           </div>
+          <script>
+            function toggleAutoPrompts() {
+              var enabled = document.getElementById('enable_auto_prompts').checked;
+              window.location = 'skp:update_auto_prompts@' + (enabled ? '1' : '0');
+            }
+          </script>
         </body>
         </html>
       HTML

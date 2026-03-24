@@ -106,6 +106,19 @@ module Yoo_ProjectChangeLog4Su
       dict[key] = value
     end
 
+    # New default is OFF for automatic prompts.
+    # Backward compatibility:
+    # - If enable_auto_prompts exists, use it.
+    # - Otherwise, derive from legacy disable_auto_prompts.
+    def self.auto_prompts_enabled?(model)
+      dict = model.attribute_dictionary('Yoo_ProjectChangeLog4Su', false)
+      if dict && dict.key?('enable_auto_prompts')
+        return get_setting(model, 'enable_auto_prompts', false)
+      end
+
+      !get_setting(model, 'disable_auto_prompts', true)
+    end
+
     # Push to Master - Copy current file to master location
     def self.push_to_master(source_path, master_path)
       begin
@@ -142,7 +155,7 @@ module Yoo_ProjectChangeLog4Su
     def self.open_settings_dialog
       model = Sketchup.active_model
       current_master = get_setting(model, 'master_file_path', '')
-      disable_auto_prompts = get_setting(model, 'disable_auto_prompts', false)
+      enable_auto_prompts = auto_prompts_enabled?(model)
       skip_threshold_minutes = get_setting(model, 'skip_threshold_minutes', 5)
       
       dialog = UI::HtmlDialog.new(
@@ -160,7 +173,7 @@ module Yoo_ProjectChangeLog4Su
       safe_master_path = current_master.gsub("\\", "\\\\\\\\").gsub("\"", "\\\"")
 
       # Use the dialogs module for HTML
-      dialog.set_html(Dialogs.settings_dialog_html(safe_master_path, disable_auto_prompts, skip_threshold_minutes))
+      dialog.set_html(Dialogs.settings_dialog_html(safe_master_path, enable_auto_prompts, skip_threshold_minutes))
       
       dialog.add_action_callback("browse_master") do |action_context|
         path = UI.savepanel("Select Master File Location", "", "*.skp")
@@ -176,7 +189,9 @@ module Yoo_ProjectChangeLog4Su
         data = JSON.parse(json_data)
         
         set_setting(model, 'master_file_path', data['masterPath'])
-        set_setting(model, 'disable_auto_prompts', data['disableAutoPrompts'])
+        set_setting(model, 'enable_auto_prompts', data['enableAutoPrompts'])
+        # Keep legacy key in sync for existing installations.
+        set_setting(model, 'disable_auto_prompts', !data['enableAutoPrompts'])
         set_setting(model, 'skip_threshold_minutes', data['skipThresholdMinutes'])
         
         UI.messagebox("Settings saved successfully!")
@@ -197,7 +212,7 @@ module Yoo_ProjectChangeLog4Su
       return unless log_path # Safety check
 
       # Skip if auto-prompts are disabled (unless forced by manual trigger)
-      return unless force || !get_setting(model, 'disable_auto_prompts', false)
+      return unless force || auto_prompts_enabled?(model)
       
       # Time-based filtering (unless forced)
       unless force
@@ -327,7 +342,14 @@ module Yoo_ProjectChangeLog4Su
         })
 
       # Use the dialogs module for HTML
-      dialog.set_html(Dialogs.log_viewer_dialog_html(rows, File.basename(model.path)))
+      dialog.set_html(Dialogs.log_viewer_dialog_html(rows, File.basename(model.path), auto_prompts_enabled?(model)))
+
+      dialog.add_action_callback("update_auto_prompts") do |action_context, enabled_value|
+        enabled = enabled_value.to_s == '1'
+        set_setting(model, 'enable_auto_prompts', enabled)
+        # Keep legacy key in sync for existing installations.
+        set_setting(model, 'disable_auto_prompts', !enabled)
+      end
 
       dialog.center
       dialog.show
