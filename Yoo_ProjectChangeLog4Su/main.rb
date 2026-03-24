@@ -112,8 +112,13 @@ module Yoo_ProjectChangeLog4Su
     # - Otherwise, derive from legacy disable_auto_prompts.
     def self.auto_prompts_enabled?(model)
       dict = model.attribute_dictionary('Yoo_ProjectChangeLog4Su', false)
-      if dict && dict.key?('enable_auto_prompts')
-        return get_setting(model, 'enable_auto_prompts', false)
+      if dict
+        enabled_value = dict['enable_auto_prompts']
+        # AttributeDictionary doesn't consistently support Hash APIs like #key?
+        # across SketchUp versions, so read the value directly.
+        unless enabled_value.nil?
+          return enabled_value
+        end
       end
 
       !get_setting(model, 'disable_auto_prompts', true)

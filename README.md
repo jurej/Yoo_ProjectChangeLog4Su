@@ -152,6 +152,11 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Changelog
 
+### Version 1.3.1 (2026-03-24)
+- Added "Enable automatic prompts" toggle in Settings and Log Viewer
+- Changed default to automatic prompts OFF for new installs
+- Added backward-compatible settings sync for existing models
+
 ### Version 1.3.0 (2025-12-02)
 - ✨ **New Feature**: Allow setting skip threshold to 0 to disable prompt skipping
 - 🔧 Improved settings validation to handle edge cases
@@ -190,3 +195,4 @@ Created with ❤️ for the SketchUp community
 ---
 
 **Star this repository** if you find it useful! ⭐
+
