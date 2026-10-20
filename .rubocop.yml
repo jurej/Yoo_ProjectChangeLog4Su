@@ -25,12 +25,12 @@ SketchupPerformance:
 
 SketchupRequirements:
   Enabled: true
-  # FileStructure check is for the packaged extension structure, not the repo
-  # The .rbz file has the correct structure (one .rb file + one support directory)
-  SketchupRequirements/FileStructure:
-    Exclude:
-      - 'Yoo_ProjectChangeLog4Su.rb'
-      - '**/*'
+
+# FileStructure check is for the packaged extension structure, not the repo
+# The .rbz file has the correct structure (one .rb file + one support directory)
+SketchupRequirements/FileStructure:
+  Exclude:
+    - '**/*'
 
 SketchupSuggestions:
   Enabled: true

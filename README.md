@@ -152,6 +152,9 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Changelog
 
+### Version 1.4.1 (2026-10-20)
+- Moved extension menu under shared "Yoo Tools" submenu (Plugins > Yoo Tools > Project Change Log)
+
 ### Version 1.3.1 (2026-03-24)
 - Added "Enable automatic prompts" toggle in Settings and Log Viewer
 - Changed default to automatic prompts OFF for new installs

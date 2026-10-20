@@ -373,8 +373,11 @@ module Yoo_ProjectChangeLog4Su
     # ------------------------------------------------------------------------
     unless file_loaded?(__FILE__)
       # Add Menu Items
-      menu = UI.menu('Plugins')
-      submenu = menu.add_submenu('Project Change Log')
+      # add_submenu returns the existing submenu when one with the same
+      # title exists, so other Yoo extensions share "Yoo Tools" instead of
+      # creating a duplicate.
+      yoo_tools = UI.menu('Plugins').add_submenu('Yoo Tools')
+      submenu = yoo_tools.add_submenu('Project Change Log')
       submenu.add_item('View History') {
         self.open_log_viewer
       }
