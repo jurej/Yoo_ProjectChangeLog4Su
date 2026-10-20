@@ -216,6 +216,13 @@ module Yoo_ProjectChangeLog4Su
       log_path = get_log_path(model)
       return unless log_path # Safety check
 
+      # If the commit dialog is already open, don't stack a new one on top -
+      # just bring the existing window to the front.
+      if @commit_dialog && @commit_dialog.visible?
+        @commit_dialog.bring_to_front
+        return
+      end
+
       # Skip if auto-prompts are disabled (unless forced by manual trigger)
       return unless force || auto_prompts_enabled?(model)
       
@@ -257,6 +264,7 @@ module Yoo_ProjectChangeLog4Su
           :height => 350,
           :style => UI::HtmlDialog::STYLE_DIALOG
         })
+      @commit_dialog = dialog
 
       # Use the dialogs module for HTML
       dialog.set_html(Dialogs.commit_dialog_html(safe_master_path, push_to_master_checked))
@@ -381,6 +389,27 @@ module Yoo_ProjectChangeLog4Su
       submenu.add_item('Settings...') {
         self.open_settings_dialog
       }
+
+      # Toolbar with a Commit Changes button (icons bundled in images/)
+      toolbar = UI::Toolbar.new('Project Change Log')
+      commit_cmd = UI::Command.new('Commit Changes') {
+        model = Sketchup.active_model
+        if model.path.empty?
+          UI.messagebox('Please save the model first before logging changes.')
+        else
+          self.prompt_for_log(model, force: true)
+        end
+      }
+      ext_dir = __dir__.dup
+      ext_dir.force_encoding('UTF-8') if ext_dir.respond_to?(:force_encoding)
+      images_dir = File.join(ext_dir, 'images')
+      commit_cmd.small_icon = File.join(images_dir, 'commit_32.png')
+      commit_cmd.large_icon = File.join(images_dir, 'commit_48.png')
+      commit_cmd.tooltip = 'Commit Changes'
+      commit_cmd.status_bar_text = 'Log changes to the project changelog.'
+      commit_cmd.menu_text = 'Commit Changes'
+      toolbar.add_item(commit_cmd)
+      toolbar.restore
 
       # Create singleton observers
       @app_observer ||= MyAppObserver.new
