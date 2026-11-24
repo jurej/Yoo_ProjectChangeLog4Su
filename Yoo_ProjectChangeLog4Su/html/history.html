@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!-- History viewer - Modus UI shell. Dev loop: open in Chrome; bridge.js
+     mocks window.sketchup so the UI can be built outside SketchUp. -->
+<html lang="en" data-theme="modus-modern-light" data-mode="light" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project history</title>
+
+  <!-- Theme bootstrap - must run BEFORE the Modus loader (no FOUC). -->
+  <script>
+    (function () {
+      var pref = "system"; // "light" | "dark" | "system"
+      function resolve(m) {
+        return m === "system"
+          ? (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+          : m;
+      }
+      window.__modusSetTheme = function (m) {
+        var mode = resolve(m || pref);
+        var el = document.documentElement;
+        el.setAttribute("data-theme", mode === "dark" ? "modus-modern-dark" : "modus-modern-light");
+        el.setAttribute("data-mode", mode);
+        el.classList.remove("light", "dark");
+        el.classList.add(mode);
+        try { localStorage.setItem("modus-theme-config", JSON.stringify({ theme: "modus-modern", mode: mode })); } catch (e) {}
+      };
+      window.__modusSetTheme(pref);
+    })();
+  </script>
+
+  <!-- Modus Web Components 1.19.1 via jsDelivr (PINNED version). -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@trimble-oss/moduswebcomponents@1.19.1/modus-wc-styles.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@trimble-oss/moduswebcomponents@1.19.1/modus-icons.css" />
+  <link rel="stylesheet" href="./shared.css" />
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@trimble-oss/moduswebcomponents@1.19.1/modus-wc/modus-wc.esm.js"></script>
+</head>
+<body>
+  <modus-wc-card bordered="true" padding="compact">
+    <div slot="title" class="dialog-title">
+      <modus-wc-typography id="history-title" hierarchy="h4" size="md" weight="semibold"
+        label="Project history"></modus-wc-typography>
+    </div>
+
+    <div class="fieldset">
+      <modus-wc-checkbox id="enable_auto_prompts"
+        label="Enable automatic prompts"></modus-wc-checkbox>
+      <div class="helper-text">If disabled, use "Log changes now" to add entries manually.</div>
+    </div>
+
+    <div id="empty-state" class="dialog-result" hidden>
+      <modus-wc-alert variant="info">No history entries yet. Save the model to create the first entry.</modus-wc-alert>
+    </div>
+
+    <div class="table-container">
+      <modus-wc-table id="log-table" caption="Project change log entries"></modus-wc-table>
+    </div>
+  </modus-wc-card>
+
+  <script src="./bridge.js"></script>
+  <script src="./history.js"></script>
+</body>
+</html>

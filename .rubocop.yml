@@ -1,4 +1,4 @@
-require: rubocop-sketchup
+plugins: rubocop-sketchup
 
 AllCops:
   DisabledByDefault: true
@@ -6,7 +6,7 @@ AllCops:
   SketchUp:
     SourcePath: . # Path to extension sources in project directory.
     EncryptedExtension: false # Enable if you plan to encrypt your extension.
-    TargetSketchUpVersion: 2017
+    TargetSketchUpVersion: 2021
   Exclude:
     - 'Gemfile*'
     - '**/*.md'

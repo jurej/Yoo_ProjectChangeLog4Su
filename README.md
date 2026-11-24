@@ -9,9 +9,11 @@ A SketchUp plugin that automatically prompts you to log changes every time you s
 - ⏰ **Timestamped Entries** - Every change is recorded with date and time
 - 🚀 **Push to Master** - Save working versions to a master file (like git push) for Layout compatibility
 - ⚙️ **Settings Dialog** - Configure master file path and preferences
-- 📊 **Table History Viewer** - View your entire project history in a clean, organized table
+- 📊 **Table History Viewer** - View your entire project history in a sortable, paginated Modus table
 - 💾 **CSV Storage** - Logs saved as `.csv` files alongside your `.skp` files for easy export and analysis
 - 🔍 **Searchable Data** - CSV format allows filtering and sorting in Excel or other tools
+- 🔔 **Update Notifications** - Checks for new releases and notifies you (never downloads or installs anything)
+- 🎨 **Modus UI** - All dialogs use Trimble Modus Web Components with light/dark theme support
 
 ## Installation
 
@@ -56,7 +58,7 @@ A SketchUp plugin that automatically prompts you to log changes every time you s
 
 ### History Viewer
 
-Access your project history by going to **Plugins > View Project Change Log**
+Access your project history by going to **Extensions > Yoo Tools > Project Change Log > View history**
 
 The history is displayed in a professional table format with:
 - **Timestamp** column showing when each change was made
@@ -101,9 +103,12 @@ When you open the history viewer, you'll see a table like this:
 
 ## Compatibility
 
-- **SketchUp Version**: 2017 and later
+- **SketchUp Version**: 2021.1 and later (dialogs use Modus Web Components, which need the CEF 88 browser in `UI::HtmlDialog`)
 - **Operating System**: Windows and macOS
 - **Ruby Version**: 2.x and later
+- **Internet access**: Required for the Modus Web Components CDN assets and update checks
+
+Built following the [Open SketchUp Framework](https://github.com/jurej/open-sketchup-framework) v0.2.1 conventions - see `AGENTS.md` in this repo.
 
 ## Code Quality
 
@@ -151,6 +156,16 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 5. Open a Pull Request
 
 ## Changelog
+
+### Version 1.5.0 (2026-11-24)
+- Migrated to the Open SketchUp Framework v0.2.1 conventions (namespaced Helpers, HtmlUi, UpdateChecker)
+- Rebuilt all three dialogs with Trimble Modus Web Components (pinned @1.19.1) - real `modus-wc` UI with theme support
+- History viewer now uses `modus-wc-table` with sorting and pagination
+- Moved menus from "Plugins" to "Extensions > Yoo Tools > Project Change Log"
+- Settings writes are now wrapped in undo operations
+- Added update notifications via hosted `version.json` (notify-only, Warehouse compliant)
+- Registered `export.changelog.append` capability for the optional Open SketchUp Registry
+- Minimum SketchUp version is now 2021.1 (CEF 88 required for Modus)
 
 ### Version 1.4.1 (2026-10-20)
 - Moved extension menu under shared "Yoo Tools" submenu (Plugins > Yoo Tools > Project Change Log)

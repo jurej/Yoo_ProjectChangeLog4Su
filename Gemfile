@@ -2,5 +2,5 @@
 
 source 'https://rubygems.org'
 
-gem 'rubocop', '~> 1.50'
-gem 'rubocop-sketchup', '~> 1.4'
+gem 'rubocop', '>= 1.72', '< 2.0'
+gem 'rubocop-sketchup', '~> 2.1.1'
