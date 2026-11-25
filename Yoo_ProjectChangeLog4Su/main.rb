@@ -185,7 +185,7 @@ module Yoo_ProjectChangeLog4Su
         html_file: 'settings.html',
         title: 'Project Change Log settings',
         width: 460,
-        height: 520,
+        height: 480,
         preferences_key: 'com.yoo.projectchangelog.settings'
       )
 
@@ -257,7 +257,7 @@ module Yoo_ProjectChangeLog4Su
         html_file: 'commit.html',
         title: 'Commit changes',
         width: 460,
-        height: 460,
+        height: 440,
         resizable: true,
         preferences_key: 'com.yoo.projectchangelog.commit_log_input',
         on_closed: ->(_dlg) { @commit_dialog = nil }

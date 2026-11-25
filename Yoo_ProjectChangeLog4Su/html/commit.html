@@ -42,13 +42,13 @@
     </div>
 
     <div class="form-stack">
-      <modus-wc-textarea id="msg" label="What changed in this version?" rows="4"
+      <modus-wc-textarea id="msg" label="What changed in this version?" size="sm" rows="4"
         placeholder="- Add description of changes"></modus-wc-textarea>
 
       <div class="fieldset">
-        <modus-wc-checkbox id="push_to_master" label="Push to master (like git push)"></modus-wc-checkbox>
+        <modus-wc-checkbox id="push_to_master" size="sm" label="Push to master (like git push)"></modus-wc-checkbox>
         <div class="path-row">
-          <modus-wc-text-input id="master_path" label="Master file path"
+          <modus-wc-text-input id="master_path" size="sm" label="Master file path"
             placeholder="C:\Projects\MyModel_MASTER.skp"></modus-wc-text-input>
           <modus-wc-button id="btn-browse" variant="outlined" color="tertiary" size="sm">Browse</modus-wc-button>
           <modus-wc-button id="btn-settings" variant="outlined" color="tertiary" size="sm">Settings</modus-wc-button>
@@ -58,15 +58,15 @@
     </div>
 
     <div id="result" class="dialog-result" hidden></div>
-
-    <div class="dialog-footer">
-      <modus-wc-button id="btn-cancel" variant="outlined" color="tertiary" size="sm">Skip</modus-wc-button>
-      <modus-wc-button id="btn-submit" variant="filled" color="primary" size="sm">
-        <modus-wc-icon name="check" size="xs" decorative></modus-wc-icon>
-        Log change
-      </modus-wc-button>
-    </div>
   </modus-wc-card>
+
+  <div class="dialog-footer">
+    <modus-wc-button id="btn-cancel" variant="outlined" color="tertiary" size="sm">Skip</modus-wc-button>
+    <modus-wc-button id="btn-submit" variant="filled" color="primary" size="sm">
+      <modus-wc-icon name="check" size="xs" decorative></modus-wc-icon>
+      Log change
+    </modus-wc-button>
+  </div>
 
   <script src="./bridge.js"></script>
   <script src="./commit.js"></script>

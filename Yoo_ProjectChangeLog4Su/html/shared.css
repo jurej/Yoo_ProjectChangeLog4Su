@@ -4,19 +4,29 @@ html,
 body {
   margin: 0;
   padding: 0;
+  height: 100%;
   background: var(--modus-wc-color-base-page);
 }
 
-/* FOUC guard - revealed by bridge.js modusReady() once elements are defined. */
+/* FOUC guard - revealed by bridge.js modusReady() once elements are defined.
+   Body is a full-height flex column so the card fills the window at any
+   size and .dialog-footer pins to the bottom. */
 body {
   visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  box-sizing: border-box;
 }
 body.modus-ready {
   visibility: visible;
 }
 
 modus-wc-card {
-  margin: 12px;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
   display: block;
 }
 
@@ -68,17 +78,20 @@ modus-wc-card {
   margin-top: 12px;
 }
 
+/* Action bar outside the card - pinned to the window bottom by the flex
+   column body. */
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  margin-top: 16px;
 }
 
-/* History dialog: table fills the card. */
+/* History dialog: table fills the card and scrolls with the window. */
 .table-container {
   margin-top: 12px;
   min-width: 0;
+  height: calc(100vh - 250px);
+  min-height: 140px;
   overflow: auto;
 }
 
