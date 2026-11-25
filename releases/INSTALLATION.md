@@ -3,7 +3,7 @@
 ## Installing from .rbz File
 
 1. **Download the .rbz file** for your desired version
-2. **Open SketchUp**
+2. **Open SketchUp** (2021.1 or later for v1.5.0+)
 3. **Go to Extensions Manager**:
    - Windows: `Window` → `Extension Manager`
    - macOS: `Window` → `Extension Manager`
@@ -12,7 +12,7 @@
 6. **Click "Install"**
 7. **Restart SketchUp** if prompted
 
-The plugin will now be available in the `Plugins` menu.
+The plugin will now be available under `Extensions` → `Yoo Tools` → `Project Change Log`.
 
 ## Manual Installation (Alternative)
 
@@ -27,4 +27,8 @@ If you prefer manual installation:
 
 ## Available Versions
 
-- **v1.3.0** - Latest version with skip threshold option (set to 0 to disable skipping)
+- **v1.5.0** - Open SketchUp Framework migration: Modus Web Components dialogs, undo-safe settings, update notifications (requires SketchUp 2021.1+)
+- **v1.4.1** - Menu under shared "Yoo Tools" submenu
+- **v1.4.0** - Commit toolbar icon and duplicate dialog guard
+- **v1.3.1** - Auto-prompt toggle, default OFF for new installs
+- **v1.3.0** - Skip threshold option (set to 0 to disable skipping)
